@@ -1,0 +1,33 @@
+.navbar {
+	height: 48px;
+	background-color: rgba(40, 40, 40, 0.7) !important;
+	padding: 0 5%;
+
+	#{&}-logo {
+		text-decoration: none;
+
+		h2 {
+			text-shadow: -1px -1px 1px rgba(255,255,255,.1), 1px 1px 1px rgba(0,0,0,.5);
+			color: gainsboro;
+			font-size: 24px;
+			user-select: none;
+			transition: text-shadow ease-in-out 0.2s;
+			white-space: nowrap;
+		}
+	}
+
+	#{&}-button {
+		background-color: transparent !important;
+		margin: 0 1em;
+
+		button {
+			color: gainsboro;
+			text-transform: uppercase;
+			text-shadow: -1px -1px 1px rgba(255,255,255,.1), 1px 1px 1px rgba(0,0,0,.5);
+			font-size: 18px;
+			border-radius: 0;
+			border-bottom: solid 2px silver;
+			transition: text-shadow ease-in-out 0.2s;
+		}
+	}
+}

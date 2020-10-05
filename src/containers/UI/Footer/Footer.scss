@@ -1,0 +1,60 @@
+@import "../../../Responsive";
+
+.footer {
+	padding: 10px;
+	background-color: whitesmoke;
+
+	#{&}-socials {
+		justify-content: flex-start;
+
+		@include media(tablet_mobile, portrait) {
+			justify-content: center;
+		}
+	}
+
+	#{&}-grid {
+		flex-direction: row;
+
+		@include media(tablet_mobile, portrait) {
+			flex-direction: column;
+		}
+	}
+
+	#{&}-copyrights {
+		margin: 1em 0;
+
+		p {
+			text-align: center;
+			color: #2a2a2a;
+		}
+
+		h6 {
+			font-size: 1.5em;
+			padding: 0 4em;
+			color: #2a2a2a;
+			text-align: center;
+		}
+	}
+
+	#{&}-iswenzz {
+
+	}
+
+	hr {
+		border-color: ghostwhite;
+	}
+
+	button {
+		background-color: transparent;
+
+		path {
+			fill: #2a2a2a;
+		}
+	}
+
+	img {
+		margin: 2em 0;
+		width: 150px;
+		height: auto;
+	}
+}
