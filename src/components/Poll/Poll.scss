@@ -1,0 +1,13 @@
+.poll {
+	background-color: orange;
+
+	#{&}-section {
+		margin: 4em;
+	}
+
+	h3 {
+		margin: 1em;
+		font-family: "Amita", cursive;
+		border-bottom: solid 1px black;
+	}
+}
