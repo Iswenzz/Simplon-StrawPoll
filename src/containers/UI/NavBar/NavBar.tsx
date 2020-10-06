@@ -85,9 +85,12 @@ export const NavBar: FunctionComponent = (): JSX.Element =>
 				<Grid component="section" container spacing={3} alignItems={"center"}>
 					<Grid component="figure" item xs={4}>
 						<a href="/" className={"navbar-logo"}>
-							<Typography variant={"h2"} component={"h2"}>
-								StrawPoll
-							</Typography>
+							<Grid container justify={"center"} alignItems={"center"} direction={"row"}>
+								<img height={40} src={require("assets/images/strawpoll-logo.png")} alt="StrawPoll Logo"/>
+								<Typography variant={"h2"} component={"h2"}>
+									StrawPoll
+								</Typography>
+							</Grid>
 						</a>
 					</Grid>
 					<Grid component="section" item xs={8}>

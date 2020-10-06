@@ -30,12 +30,14 @@ export const Footer: FunctionComponent = (): JSX.Element =>
 			<Container maxWidth={"md"}>
 				<Grid className={"footer-grid"} container justify={"space-evenly"} alignItems={"center"}>
 					<Grid item xs={isTabletOrMobileDevice || isPortrait ? 12 : 6}>
-						<img src={""} alt="StrawPoll Logo"/>
+						<Grid container justify={"center"} alignItems={"center"} direction={"row"}>
+							<img src={require("assets/images/strawpoll-logo.png")} alt="StrawPoll Logo"/>
+							<Typography variant={"h4"} component={"h4"}>
+								StrawPoll
+							</Typography>
+						</Grid>
 					</Grid>
 					<Grid className={"footer-copyrights"} item xs={isTabletOrMobileDevice || isPortrait ? 12 : 6}>
-						<Typography paragraph component={"p"}>
-							yes le description
-						</Typography>
 						<Typography className={"footer-iswenzz"} variant={"h6"} component={"h6"}>
 							Iswenzz © 2020
 						</Typography>
