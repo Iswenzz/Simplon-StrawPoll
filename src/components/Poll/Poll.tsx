@@ -8,13 +8,14 @@ import {
 	Grid,
 	Radio,
 	RadioGroup,
-	Typography, InputBase, TextareaAutosize
+	Typography, TextareaAutosize
 } from "@material-ui/core";
+import axios from "axios";
 import "./Poll.scss";
 
 export interface PollEntry
 {
-	name: string,
+	value: string,
 	voteCount?: number
 }
 
@@ -23,15 +24,15 @@ export interface PollProps
 	className?: string,
 	style?: React.CSSProperties,
 	entries?: PollEntry[],
-	name?: string,
+	question?: string,
 	statut: PollStatut
 }
 
 export interface PollState
 {
 	entries: PollEntry[],
-	name?: string,
-	value?: string,
+	question?: string,
+	radioValue?: string,
 	statut: PollStatut,
 	errorMessage?: string,
 	registerList: React.RefObject<HTMLUListElement>
@@ -48,8 +49,8 @@ export class Poll extends Component<PollProps, PollState>
 {
 	state = {
 		entries: this.props.statut === PollStatut.REGISTER
-			? [{name: ""}, {name: ""}, {name: ""}] : this.props.entries || [],
-		name: this.props.statut === PollStatut.REGISTER ? "" : this.props.name,
+			? [{value: ""}, {value: ""}, {value: ""}] : this.props.entries || [],
+		question: this.props.statut === PollStatut.REGISTER ? "" : this.props.question,
 		statut: this.props.statut,
 		value: undefined,
 		errorMessage: "",
@@ -66,7 +67,7 @@ export class Poll extends Component<PollProps, PollState>
 		event.persist();
 		this.setState((prevState: PollState) => ({
 			...prevState,
-			value: value
+			radioValue: value
 		}));
 	}
 
@@ -80,10 +81,10 @@ export class Poll extends Component<PollProps, PollState>
 		const inputs = Array.from(this.state.registerList.current!.childNodes)
 			.map(li => li.firstChild?.firstChild?.firstChild) as HTMLInputElement[];
 
-		const entries: PollEntry[] = inputs.map<PollEntry>(i => ({name: i.value}));
+		const entries: PollEntry[] = inputs.map<PollEntry>(i => ({value: i.value}));
 		// if all inputs are full, add a new one
 		if (inputs.every(i => i.value))
-			entries.push({name: ""});
+			entries.push({value: ""});
 
 		// save all inputs
 		this.setState((prevState: PollState) => ({
@@ -101,7 +102,7 @@ export class Poll extends Component<PollProps, PollState>
 		event.persist();
 		this.setState((prevState: PollState) => ({
 			...prevState,
-			name: event.target?.value
+			question: event.target?.value
 		}));
 	}
 
@@ -131,10 +132,10 @@ export class Poll extends Component<PollProps, PollState>
 	 * Poll register submission.
 	 * @TODO backend
 	 */
-	public submitRegister(): void
+	public async submitRegister(): Promise<void>
 	{
 		// pole name is empty
-		if (!this.state.name)
+		if (!this.state.question)
 		{
 			this.setState((prevState: PollState) => ({
 				...prevState,
@@ -153,6 +154,28 @@ export class Poll extends Component<PollProps, PollState>
 				errorMessage: "Please add atleast one poll option!"
 			}));
 			return;
+		}
+
+		// create the poll
+		try
+		{
+			const response = await axios.post("http://localhost:8000/poll/create", {
+				question: this.state.question,
+				entries: this.state.entries
+			});
+
+			// request failed
+			if (!response.data.success)
+			{
+				this.setState((prevState: PollState) => ({
+					...prevState,
+					errorMessage: response.data.error
+				}));
+			}
+		}
+		catch (e)
+		{
+			console.log(e);
 		}
 	}
 
@@ -179,16 +202,16 @@ export class Poll extends Component<PollProps, PollState>
 			<>
 				<FormLabel className={"poll-header"} component="legend">
 					<Typography variant={"h3"} component={"h3"}>
-						{this.state.name}
+						{this.state.question}
 					</Typography>
 				</FormLabel>
 				<ul className={"poll-section"}>
 					{this.state.entries.map((entry: PollEntry) => (
-						<li className={"poll-entry-result"} key={entry.name}>
+						<li className={"poll-entry-result"} key={entry.value}>
 							<Grid component={"div"} container justify={"space-between"}
 								  alignItems={"center"} direction={"row"}>
 								<Typography variant={"h5"} component={"span"}>
-									{entry.name}
+									{entry.value}
 								</Typography>
 								<Typography variant={"h5"} component={"span"}>
 									{entry.voteCount || 0}
@@ -227,15 +250,15 @@ export class Poll extends Component<PollProps, PollState>
 			<>
 				<FormLabel className={"poll-header"} component="legend">
 					<Typography variant={"h3"} component={"h3"}>
-						{this.state.name}
+						{this.state.question}
 					</Typography>
 				</FormLabel>
 				<RadioGroup className={"poll-section"} aria-label="poll" name="poll"
 							onChange={this.voteChange.bind(this)}>
 					<ul>
 						{this.state.entries.map((entry: PollEntry, index: number) => (
-							<li className={"poll-entry-vote"} key={entry.name}>
-								<FormControlLabel value={index.toString()} control={<Radio />} label={entry.name} />
+							<li className={"poll-entry-vote"} key={entry.value}>
+								<FormControlLabel value={index.toString()} control={<Radio />} label={entry.value} />
 							</li>
 						))}
 					</ul>

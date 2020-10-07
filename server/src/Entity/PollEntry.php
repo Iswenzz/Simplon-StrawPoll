@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\PollEntryRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=PollEntryRepository::class)
@@ -19,6 +20,7 @@ class PollEntry
 
     /**
      * @ORM\Column(type="string", length=255)
+	 * @Assert\Length(max = 255, minMessage="The entries must be less than 256 characters")
      */
     private $value;
 

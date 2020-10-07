@@ -6,6 +6,7 @@ use App\Repository\PollRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=PollRepository::class)
@@ -21,11 +22,13 @@ class Poll
 
     /**
      * @ORM\Column(type="string", length=255)
+	 * @Assert\Length(max = 255, minMessage="The question must be less than 256 characters")
      */
     private $question;
 
     /**
      * @ORM\OneToMany(targetEntity=PollEntry::class, mappedBy="poll")
+	 * @Assert\Count(min = 1, minMessage="Please add atleast one poll entry!")
      */
     private $entries;
 

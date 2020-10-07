@@ -24,6 +24,7 @@
 		font-weight: bold;
 		color: rgb(245, 0, 87);
 		text-decoration: underline;
+		width: 80%;
 
 		@include media(tablet_mobile, portrait) {
 			width: 60%;
