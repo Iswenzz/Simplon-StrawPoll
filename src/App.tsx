@@ -1,7 +1,8 @@
 import React, {FunctionComponent} from "react";
-import Home from "containers/Home/Home";
+import PollPage from "containers/PollPage/PollPage";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { createMuiTheme, responsiveFontSizes, ThemeProvider } from "@material-ui/core";
+import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
 import "./App.scss";
 
 /**
@@ -74,7 +75,12 @@ export const App: FunctionComponent<any> = (props: any): JSX.Element =>
 		<React.StrictMode>
 			<ThemeProvider theme={theme}>
 				<CssBaseline />
-				<Home />
+				<Router>
+					<Switch>
+						<Route path="/" children={<PollPage />} />
+						<Route path="/poll/:id" children={<PollPage />} />
+					</Switch>
+				</Router>
 			</ThemeProvider>
 		</React.StrictMode>
 	);

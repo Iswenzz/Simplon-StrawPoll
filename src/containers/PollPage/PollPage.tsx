@@ -1,18 +1,18 @@
 import React, {FunctionComponent} from "react";
 import NavBar from "../UI/NavBar/NavBar";
 import Footer from "../UI/Footer/Footer";
-import PollCreation from "./PollCreation/PollCreation";
-import "./Home.scss";
+import PollForm from "./PollForm/PollForm";
+import "./PollPage.scss";
 
-export const Home: FunctionComponent = (): JSX.Element =>
+export const PollPage: FunctionComponent = (): JSX.Element =>
 {
 	return (
 		<>
 			<NavBar />
-			<PollCreation />
+			<PollForm />
 			<Footer />
 		</>
 	);
 };
 
-export default Home;
+export default PollPage;
