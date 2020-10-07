@@ -10,7 +10,7 @@ export class PollCreation extends Component
 		return (
 			<Grid className={"pollcreation"} container direction={"column"}
 				  justify={"center"} alignItems={"center"}>
-				<Poll className={"pollcreation-poll"} name={"Laravel > Symfony"} statut={PollStatut.VOTE}
+				<Poll className={"pollcreation-poll"} name={"Laravel > Symfony"} statut={PollStatut.REGISTER}
 					  entries={[{name: "yes"}, {name: "no"}, {name: "idk php is trash"}]} />
 			</Grid>
 		);

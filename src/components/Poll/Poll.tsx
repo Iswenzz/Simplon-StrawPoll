@@ -184,7 +184,7 @@ export class Poll extends Component<PollProps, PollState>
 				</FormLabel>
 				<ul className={"poll-section"}>
 					{this.state.entries.map((entry: PollEntry) => (
-						<li className={"poll-entry"} key={entry.name}>
+						<li className={"poll-entry-result"} key={entry.name}>
 							<Grid component={"div"} container justify={"space-between"}
 								  alignItems={"center"} direction={"row"}>
 								<Typography variant={"h5"} component={"span"}>
@@ -210,7 +210,7 @@ export class Poll extends Component<PollProps, PollState>
 				</FormLabel>
 				<ul className={"poll-section"} ref={this.state.registerList}>
 					{this.state.entries.map((entry: PollEntry, index: number) => (
-						<li key={index} className={"poll-input"}>
+						<li key={index} className={"poll-entry-input"}>
 							<TextField fullWidth color={"secondary"} placeholder={"Enter poll option"}
 									   onChange={this.onOptionChange.bind(this)} />
 						</li>
@@ -234,7 +234,7 @@ export class Poll extends Component<PollProps, PollState>
 							onChange={this.voteChange.bind(this)}>
 					<ul>
 						{this.state.entries.map((entry: PollEntry, index: number) => (
-							<li className={"poll-entry"} key={entry.name}>
+							<li className={"poll-entry-vote"} key={entry.name}>
 								<FormControlLabel value={index.toString()} control={<Radio />} label={entry.name} />
 							</li>
 						))}
