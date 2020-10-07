@@ -6,6 +6,7 @@ use App\Repository\PollRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -17,18 +18,21 @@ class Poll
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+	 * @Groups("poll")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
 	 * @Assert\Length(max = 255, minMessage="The question must be less than 256 characters")
+	 * @Groups("poll")
      */
     private $question;
 
     /**
      * @ORM\OneToMany(targetEntity=PollEntry::class, mappedBy="poll")
 	 * @Assert\Count(min = 1, minMessage="Please add atleast one poll entry!")
+	 * @Groups("poll")
      */
     private $entries;
 
