@@ -10,7 +10,8 @@ import {
 	RadioGroup,
 	Typography, TextareaAutosize
 } from "@material-ui/core";
-import axios from "axios";
+import axios, {AxiosResponse} from "axios";
+import * as uuid from "uuid";
 import "./Poll.scss";
 
 export interface PollEntry
@@ -38,6 +39,12 @@ export interface PollState
 	registerList: React.RefObject<HTMLUListElement>
 }
 
+export interface PollResponseAPI
+{
+	question: string,
+	entries: PollEntry[]
+}
+
 export enum PollStatut
 {
 	REGISTER,
@@ -52,17 +59,37 @@ export class Poll extends Component<PollProps, PollState>
 			? [{value: ""}, {value: ""}, {value: ""}] : this.props.entries || [],
 		question: this.props.statut === PollStatut.REGISTER ? "" : this.props.question,
 		statut: this.props.statut,
-		value: undefined,
+		radioValue: undefined,
 		errorMessage: "",
 		registerList: createRef<HTMLUListElement>()
 	};
+
+	/**
+	 * Check if poll statut changed.
+	 * @param prevProps - The previous props.
+	 */
+	public componentDidUpdate(prevProps: PollProps)
+	{
+		// update poll statut
+		if (prevProps.statut !== this.props.statut
+			|| prevProps.question !== this.props.question
+			|| prevProps.entries !== this.props.entries)
+		{
+			this.setState((prevState: PollState) => ({
+				...prevState,
+				statut: this.props.statut,
+				question: this.props.question,
+				entries: this.props.entries ?? []
+			}));
+		}
+	}
 
 	/**
 	 * Callback on vote change.
 	 * @param event - The radio button sender.
 	 * @param value - The vote index.
 	 */
-	public voteChange(event: React.ChangeEvent<HTMLInputElement>, value: string): void
+	public onVoteChange(event: React.ChangeEvent<HTMLInputElement>, value: string): void
 	{
 		event.persist();
 		this.setState((prevState: PollState) => ({
@@ -186,7 +213,7 @@ export class Poll extends Component<PollProps, PollState>
 	public submitVote(): void
 	{
 		// is radio button selected
-		if (!this.state.value)
+		if (!this.state.radioValue)
 		{
 			this.setState((prevState: PollState) => ({
 				...prevState,
@@ -207,7 +234,7 @@ export class Poll extends Component<PollProps, PollState>
 				</FormLabel>
 				<ul className={"poll-section"}>
 					{this.state.entries.map((entry: PollEntry) => (
-						<li className={"poll-entry-result"} key={entry.value}>
+						<li className={"poll-entry-result"} key={uuid.v4()}>
 							<Grid component={"div"} container justify={"space-between"}
 								  alignItems={"center"} direction={"row"}>
 								<Typography variant={"h5"} component={"span"}>
@@ -254,10 +281,10 @@ export class Poll extends Component<PollProps, PollState>
 					</Typography>
 				</FormLabel>
 				<RadioGroup className={"poll-section"} aria-label="poll" name="poll"
-							onChange={this.voteChange.bind(this)}>
+							onChange={this.onVoteChange.bind(this)}>
 					<ul>
 						{this.state.entries.map((entry: PollEntry, index: number) => (
-							<li className={"poll-entry-vote"} key={entry.value}>
+							<li className={"poll-entry-vote"} key={uuid.v4()}>
 								<FormControlLabel value={index.toString()} control={<Radio />} label={entry.value} />
 							</li>
 						))}
@@ -282,5 +309,24 @@ export class Poll extends Component<PollProps, PollState>
 		);
 	}
 }
+
+/**
+ * Get a poll by ID.
+ */
+export const getPollById = async (id: number | string): Promise<PollResponseAPI | null> =>
+{
+	try
+	{
+		const response: AxiosResponse<PollResponseAPI> = await axios.get(
+			`http://localhost:8000/poll/${id}`);
+		return response.data;
+	}
+	catch (e)
+	{
+		console.log(e);
+	}
+	return null;
+};
+
 
 export default memo(Poll);

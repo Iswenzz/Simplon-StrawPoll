@@ -77,8 +77,8 @@ export const App: FunctionComponent<any> = (props: any): JSX.Element =>
 				<CssBaseline />
 				<Router>
 					<Switch>
-						<Route path="/" children={<PollPage />} />
 						<Route path="/poll/:id" children={<PollPage />} />
+						<Route exact path="/" children={<PollPage />} />
 					</Switch>
 				</Router>
 			</ThemeProvider>
