@@ -10,39 +10,26 @@ import {
 	RadioGroup,
 	Typography, TextareaAutosize
 } from "@material-ui/core";
-import axios, {AxiosResponse} from "axios";
 import * as uuid from "uuid";
-import "./Poll.scss";
-
-export interface PollEntry
-{
-	value: string,
-	voteCount?: number
-}
+import PollRepository, {Poll, PollCreateAPI, PollEntry} from "../../repositories/PollRepository";
+import "./PollCard.scss";
 
 export interface PollProps
 {
 	className?: string,
 	style?: React.CSSProperties,
-	entries?: PollEntry[],
-	question?: string,
-	statut: PollStatut
+	statut: PollStatut,
+	onStatutChange?: (statut: PollStatut, pollId: number) => void,
+	poll?: Poll | null
 }
 
 export interface PollState
 {
-	entries: PollEntry[],
-	question?: string,
 	radioValue?: string,
 	statut: PollStatut,
 	errorMessage?: string,
-	registerList: React.RefObject<HTMLUListElement>
-}
-
-export interface PollResponseAPI
-{
-	question: string,
-	entries: PollEntry[]
+	registerList: React.RefObject<HTMLUListElement>,
+	poll?: Poll | null
 }
 
 export enum PollStatut
@@ -52,12 +39,24 @@ export enum PollStatut
 	RESULT
 }
 
-export class Poll extends Component<PollProps, PollState>
+export const defaultPoll: Poll = {
+	id: 0,
+	question: "",
+	entries: [{value: "", voteCount: 0}, {value: "", voteCount: 0}, {value: "", voteCount: 0}],
+	users: [],
+	isVoted: false
+}
+
+/**
+ * Poll component linked to an API.
+ * - Create
+ * - Vote
+ * - Results
+ */
+export class PollCard extends Component<PollProps, PollState>
 {
 	state = {
-		entries: this.props.statut === PollStatut.REGISTER
-			? [{value: ""}, {value: ""}, {value: ""}] : this.props.entries || [],
-		question: this.props.statut === PollStatut.REGISTER ? "" : this.props.question,
+		poll: this.props.poll ?? defaultPoll,
 		statut: this.props.statut,
 		radioValue: undefined,
 		errorMessage: "",
@@ -72,14 +71,12 @@ export class Poll extends Component<PollProps, PollState>
 	{
 		// update poll statut
 		if (prevProps.statut !== this.props.statut
-			|| prevProps.question !== this.props.question
-			|| prevProps.entries !== this.props.entries)
+			|| prevProps.poll !== this.props.poll)
 		{
 			this.setState((prevState: PollState) => ({
 				...prevState,
 				statut: this.props.statut,
-				question: this.props.question,
-				entries: this.props.entries ?? []
+				poll: this.props.poll
 			}));
 		}
 	}
@@ -108,15 +105,18 @@ export class Poll extends Component<PollProps, PollState>
 		const inputs = Array.from(this.state.registerList.current!.childNodes)
 			.map(li => li.firstChild?.firstChild?.firstChild) as HTMLInputElement[];
 
-		const entries: PollEntry[] = inputs.map<PollEntry>(i => ({value: i.value}));
+		const entries: PollEntry[] = inputs.map<PollEntry>(i => ({value: i.value, voteCount: 0}));
 		// if all inputs are full, add a new one
 		if (inputs.every(i => i.value))
-			entries.push({value: ""});
+			entries.push({value: "", voteCount: 0});
 
 		// save all inputs
 		this.setState((prevState: PollState) => ({
 			...prevState,
-			entries: entries
+			poll: {
+				...this.state.poll,
+				entries: entries
+			}
 		}));
 	}
 
@@ -129,7 +129,10 @@ export class Poll extends Component<PollProps, PollState>
 		event.persist();
 		this.setState((prevState: PollState) => ({
 			...prevState,
-			question: event.target?.value
+			poll: {
+				...this.state.poll,
+				question: event.target?.value
+			}
 		}));
 	}
 
@@ -157,12 +160,11 @@ export class Poll extends Component<PollProps, PollState>
 
 	/**
 	 * Poll register submission.
-	 * @TODO backend
 	 */
 	public async submitRegister(): Promise<void>
 	{
 		// pole name is empty
-		if (!this.state.question)
+		if (!this.state.poll.question)
 		{
 			this.setState((prevState: PollState) => ({
 				...prevState,
@@ -184,33 +186,33 @@ export class Poll extends Component<PollProps, PollState>
 		}
 
 		// create the poll
-		try
+		const response: PollCreateAPI | null = await PollRepository.getInstance().add(this.state.poll);
+		if (!response || response && !response.success) // request failed
 		{
-			const response = await axios.post("http://localhost:8000/poll/create", {
-				question: this.state.question,
-				entries: this.state.entries
-			});
-
-			// request failed
-			if (!response.data.success)
-			{
-				this.setState((prevState: PollState) => ({
-					...prevState,
-					errorMessage: response.data.error
-				}));
-			}
+			this.setState((prevState: PollState) => ({
+				...prevState,
+				errorMessage: response?.error
+			}));
+			return;
 		}
-		catch (e)
+
+		// change the pole statut to VOTE & refresh data
+		if (this.props.onStatutChange && response.poll.id)
+			this.props.onStatutChange(PollStatut.VOTE, response.poll.id);
+		else
 		{
-			console.log(e);
+			this.setState((prevState: PollState) => ({
+				...prevState,
+				statut: PollStatut.VOTE,
+				poll: response.poll
+			}));
 		}
 	}
 
 	/**
 	 * Poll vote submission.
-	 * @TODO backend
 	 */
-	public submitVote(): void
+	public async submitVote(): Promise<void>
 	{
 		// is radio button selected
 		if (!this.state.radioValue)
@@ -221,6 +223,30 @@ export class Poll extends Component<PollProps, PollState>
 			}));
 			return;
 		}
+
+		// update the poll vote
+		const response: PollCreateAPI | null = await PollRepository.getInstance()
+			.update(this.state.poll, this.state.radioValue!);
+		if (!response || response && !response.success) // request failed
+		{
+			this.setState((prevState: PollState) => ({
+				...prevState,
+				errorMessage: response?.error
+			}));
+			return;
+		}
+
+		// change the pole statut to RESULT & refresh data
+		if (this.props.onStatutChange && response.poll.id)
+			this.props.onStatutChange(PollStatut.RESULT, response.poll.id);
+		else
+		{
+			this.setState((prevState: PollState) => ({
+				...prevState,
+				statut: PollStatut.RESULT,
+				poll: response.poll
+			}));
+		}
 	}
 
 	public render(): JSX.Element
@@ -229,11 +255,11 @@ export class Poll extends Component<PollProps, PollState>
 			<>
 				<FormLabel className={"poll-header"} component="legend">
 					<Typography variant={"h3"} component={"h3"}>
-						{this.state.question}
+						{this.state.poll?.question}
 					</Typography>
 				</FormLabel>
 				<ul className={"poll-section"}>
-					{this.state.entries.map((entry: PollEntry) => (
+					{this.state.poll?.entries.map((entry: PollEntry) => (
 						<li className={"poll-entry-result"} key={uuid.v4()}>
 							<Grid component={"div"} container justify={"space-between"}
 								  alignItems={"center"} direction={"row"}>
@@ -259,7 +285,7 @@ export class Poll extends Component<PollProps, PollState>
 					</Typography>
 				</FormLabel>
 				<ul className={"poll-section"} ref={this.state.registerList}>
-					{this.state.entries.map((entry: PollEntry, index: number) => (
+					{this.state.poll?.entries.map((entry: PollEntry, index: number) => (
 						<li key={index} className={"poll-entry-input"}>
 							<TextField fullWidth color={"secondary"} placeholder={"Enter poll option"}
 									   onChange={this.onOptionChange.bind(this)} />
@@ -277,13 +303,13 @@ export class Poll extends Component<PollProps, PollState>
 			<>
 				<FormLabel className={"poll-header"} component="legend">
 					<Typography variant={"h3"} component={"h3"}>
-						{this.state.question}
+						{this.state.poll?.question}
 					</Typography>
 				</FormLabel>
 				<RadioGroup className={"poll-section"} aria-label="poll" name="poll"
 							onChange={this.onVoteChange.bind(this)}>
 					<ul>
-						{this.state.entries.map((entry: PollEntry, index: number) => (
+						{this.state.poll?.entries.map((entry: PollEntry, index: number) => (
 							<li className={"poll-entry-vote"} key={uuid.v4()}>
 								<FormControlLabel value={index.toString()} control={<Radio />} label={entry.value} />
 							</li>
@@ -310,23 +336,4 @@ export class Poll extends Component<PollProps, PollState>
 	}
 }
 
-/**
- * Get a poll by ID.
- */
-export const getPollById = async (id: number | string): Promise<PollResponseAPI | null> =>
-{
-	try
-	{
-		const response: AxiosResponse<PollResponseAPI> = await axios.get(
-			`http://localhost:8000/poll/${id}`);
-		return response.data;
-	}
-	catch (e)
-	{
-		console.log(e);
-	}
-	return null;
-};
-
-
-export default memo(Poll);
+export default memo(PollCard);
