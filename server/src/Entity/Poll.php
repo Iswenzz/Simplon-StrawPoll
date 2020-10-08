@@ -24,21 +24,28 @@ class Poll
 
     /**
      * @ORM\Column(type="string", length=255)
-	 * @Assert\Length(max = 255, minMessage="The question must be less than 256 characters")
+	 * @Assert\Length(max=255, maxMessage="The question must be less than 256 characters")
 	 * @Groups("poll")
      */
     private $question;
 
     /**
      * @ORM\OneToMany(targetEntity=PollEntry::class, mappedBy="poll")
-	 * @Assert\Count(min = 1, minMessage="Please add atleast one poll entry!")
+	 * @Assert\Count(min=1, minMessage="Please add atleast one poll entry!")
 	 * @Groups("poll")
      */
     private $entries;
 
+    /**
+     * @ORM\OneToMany(targetEntity=PollUser::class, mappedBy="poll")
+	 * @Groups("poll")
+     */
+    private $users;
+
     public function __construct()
     {
         $this->entries = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -83,6 +90,37 @@ class Poll
             // set the owning side to null (unless already changed)
             if ($entry->getPoll() === $this) {
                 $entry->setPoll(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PollUser[]
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(PollUser $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->setPoll($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(PollUser $user): self
+    {
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
+            // set the owning side to null (unless already changed)
+            if ($user->getPoll() === $this) {
+                $user->setPoll(null);
             }
         }
 

@@ -21,7 +21,7 @@ class PollEntry
 
     /**
      * @ORM\Column(type="string", length=255)
-	 * @Assert\Length(max = 255, minMessage="The entries must be less than 256 characters")
+	 * @Assert\Length(max=255, maxMessage="The entries must be less than 256 characters")
 	 * @Groups("poll")
      */
     private $value;
