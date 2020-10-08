@@ -20,6 +20,12 @@ export interface PollPageState
 
 export interface PollPageProps extends RouteComponentProps<PollPageQueryString> { }
 
+/**
+ * Page to register/vote or see the result of a poll.
+ * @param props
+ * @constructor
+ * @TODO - loader & animations.
+ */
 export const PollPage: FunctionComponent<PollPageProps> = (props: PollPageProps): JSX.Element =>
 {
 	const [state, setState] = useState<PollPageState>({
@@ -92,7 +98,6 @@ export const PollPage: FunctionComponent<PollPageProps> = (props: PollPageProps)
 				  justify={"center"} alignItems={"center"}>
 				{props.match.url.includes("poll")
 					? (state.poll && state.poll.isVoted ? pollResult : pollVote) : pollRegister}
-				{/*TODO is voted*/}
 			</Grid>
 			<Footer />
 		</>
