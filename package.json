@@ -31,6 +31,7 @@
     "react-scripts": "3.4.3",
     "react-scroll": "^1.8.1",
     "react-visibility-sensor": "^5.1.1",
+    "seed-color": "^2.0.1",
     "typescript": "^3.9.7",
     "uuid": "^8.3.0"
   },
