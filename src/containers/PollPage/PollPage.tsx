@@ -3,8 +3,9 @@ import NavBar from "../UI/NavBar/NavBar";
 import Footer from "../UI/Footer/Footer";
 import PollCard, {PollStatut} from "../../components/Poll/PollCard";
 import {withRouter, RouteComponentProps} from "react-router-dom";
-import {Grid} from "@material-ui/core";
+import {CircularProgress, Grid} from "@material-ui/core";
 import PollRepository, {Poll, PollGetAPI} from "../../repositories/PollRepository";
+import {motion, Variants} from "framer-motion";
 import "./PollPage.scss";
 
 export interface PollPageQueryString
@@ -19,6 +20,15 @@ export interface PollPageState
 }
 
 export interface PollPageProps extends RouteComponentProps<PollPageQueryString> { }
+
+const anim: Variants = {
+	enter: {
+		x: "0",
+	},
+	exit: {
+		x: "100%",
+	}
+};
 
 /**
  * Page to register/vote or see the result of a poll.
@@ -91,13 +101,21 @@ export const PollPage: FunctionComponent<PollPageProps> = (props: PollPageProps)
 				  className={"pollpage-poll"} statut={PollStatut.REGISTER} />
 	);
 
+	/**
+	 * Get the right poll element.
+	 */
+	const poll: JSX.Element = props.match.url.includes("poll")
+		? (state.poll && state.poll.isVoted ? pollResult : pollVote) : pollRegister;
+
 	return (
 		<>
 			<NavBar />
 			<Grid className={"pollpage"} container direction={"column"}
 				  justify={"center"} alignItems={"center"}>
-				{props.match.url.includes("poll")
-					? (state.poll && state.poll.isVoted ? pollResult : pollVote) : pollRegister}
+				<motion.div initial={"exit"} variants={anim}
+							animate={state.isLoading ? "exit" : "enter"}>
+					{state.isLoading ? <CircularProgress color="secondary" /> : poll}
+				</motion.div>
 			</Grid>
 			<Footer />
 		</>

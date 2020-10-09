@@ -8,11 +8,13 @@ import {
 	Grid,
 	Radio,
 	RadioGroup,
-	Typography, TextareaAutosize
+	Typography, TextareaAutosize, LinearProgress
 } from "@material-ui/core";
 import * as uuid from "uuid";
+import {motion, Variants} from "framer-motion";
 import PollRepository, {Poll, PollCreateAPI, PollEntry} from "../../repositories/PollRepository";
 import "./PollCard.scss";
+import {PieChart} from "react-minimal-pie-chart";
 
 export interface PollProps
 {
@@ -45,7 +47,19 @@ export const defaultPoll: Poll = {
 	entries: [{value: "", voteCount: 0}, {value: "", voteCount: 0}, {value: "", voteCount: 0}],
 	users: [],
 	isVoted: false
-}
+};
+
+const linearProgressAnim: Variants = {
+	initial: {
+		width: 0
+	},
+	enter: {
+		width: "100%",
+		transition: {
+			duration: 2
+		}
+	}
+};
 
 /**
  * Poll component linked to an API.
@@ -249,6 +263,19 @@ export class PollCard extends Component<PollProps, PollState>
 		}
 	}
 
+	/**
+	 * Compute the percent of an entry.
+	 * @param entryVoteCount - The entry vote count.
+	 */
+	public computeEntryPercent(entryVoteCount: number): number
+	{
+		const sum: number = this.state.poll.entries
+			.map<number>(e => e.voteCount)
+			.reduce<number>((a, b) => a + b, 0);
+		const percent = (entryVoteCount / sum) * 100;
+		return Math.round(percent * 100) / 100;
+	}
+
 	public render(): JSX.Element
 	{
 		const resultPoll: JSX.Element = (
@@ -259,19 +286,36 @@ export class PollCard extends Component<PollProps, PollState>
 					</Typography>
 				</FormLabel>
 				<ul className={"poll-section"}>
-					{this.state.poll?.entries.map((entry: PollEntry) => (
-						<li className={"poll-entry-result"} key={uuid.v4()}>
-							<Grid component={"div"} container justify={"space-between"}
-								  alignItems={"center"} direction={"row"}>
-								<Typography variant={"h5"} component={"span"}>
-									{entry.value}
-								</Typography>
-								<Typography variant={"h5"} component={"span"}>
-									{entry.voteCount || 0}
-								</Typography>
-							</Grid>
-						</li>
-					))}
+					{this.state.poll?.entries.map((entry: PollEntry) => {
+						const entryPercent = this.computeEntryPercent(entry.voteCount);
+						return (
+							<li className={"poll-entry-result"} key={uuid.v4()}>
+								<Grid component={"div"} container justify={"space-between"}
+									  alignItems={"center"} direction={"row"}>
+									<Typography variant={"h5"} component={"span"}>
+										{entry.value}
+									</Typography>
+									<Typography variant={"h5"} component={"span"}>
+										{`${entry.voteCount || 0} Votes`}
+									</Typography>
+								</Grid>
+								<Grid container>
+									<Grid item xs={9} sm={10} md={11}>
+										<motion.div initial={"initial"} animate={"enter"} variants={linearProgressAnim}>
+											<LinearProgress className={"poll-entry-result-progress"}
+												variant="determinate" value={entryPercent} />
+										</motion.div>
+									</Grid>
+									<Grid item xs={3} sm={2} md={1}>
+										<Typography className={"poll-entry-result-percent"}
+											variant={"h5"} component={"h5"}>
+											{`${entryPercent}%`}
+										</Typography>
+									</Grid>
+								</Grid>
+							</li>
+						);
+					})}
 				</ul>
 			</>
 		);
