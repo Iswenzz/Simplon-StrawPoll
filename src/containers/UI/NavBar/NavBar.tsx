@@ -2,7 +2,7 @@ import {FunctionComponent, useState} from "react";
 import React from "react";
 import {AppBar, Toolbar, Button, Typography, Grid, Fab, Drawer} from "@material-ui/core";
 import {useMediaQuery} from "react-responsive";
-import { Link } from "react-scroll";
+import {Link} from "react-router-dom";
 import MenuIcon from "@material-ui/icons/Menu";
 import "./NavBar.scss";
 
@@ -27,14 +27,12 @@ export const NavBar: FunctionComponent = (): JSX.Element =>
 	const navBarElements: JSX.Element = (
 		<>
 			<li>
-				<Link className="navbar-button" to="create-section" smooth onClick={() => toggleDrawer(false)}
-					  offset={isTabletOrMobileDevice ? 50 : 10}>
+				<Link className="navbar-button" to={"/"} onClick={() => toggleDrawer(false)}>
 					<Button size='large' color="inherit">Create</Button>
 				</Link>
 			</li>
 			<li>
-				<Link className="navbar-button" to="search-section" smooth onClick={() => toggleDrawer(false)}
-					  offset={isTabletOrMobileDevice ? 30 : 10}>
+				<Link className="navbar-button" to={"/"} onClick={() => toggleDrawer(false)}>
 					<Button size='large' color="inherit">Search</Button>
 				</Link>
 			</li>
@@ -78,7 +76,7 @@ export const NavBar: FunctionComponent = (): JSX.Element =>
 		<AppBar className={"navbar"} component="nav" position={"fixed"}>
 			<Toolbar variant="dense">
 				<Grid component="section" container spacing={3} alignItems={"center"}>
-					<Grid component="figure" item xs={4}>
+					<Grid component="figure" item xs={6} md={4}>
 						<a href="/" className={"navbar-logo"}>
 							<Grid container justify={"center"} alignItems={"center"} direction={"row"}>
 								<img height={40} src={require("assets/images/strawpoll-logo.png")} alt="StrawPoll Logo"/>
@@ -88,7 +86,7 @@ export const NavBar: FunctionComponent = (): JSX.Element =>
 							</Grid>
 						</a>
 					</Grid>
-					<Grid component="section" item xs={8}>
+					<Grid component="section" item xs={6} md={8}>
 						{isTabletOrMobileDevice || isPortrait ? navBarButtonsMobile : navBarButtonsDesktop}
 					</Grid>
 				</Grid>
