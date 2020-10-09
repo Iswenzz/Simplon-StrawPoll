@@ -27,19 +27,14 @@ export const NavBar: FunctionComponent = (): JSX.Element =>
 	const navBarElements: JSX.Element = (
 		<>
 			<li>
-				<Link className="navbar-button" to="lore-section" smooth onClick={() => toggleDrawer(false)}>
-					<Button size='large' color="inherit">Home</Button>
-				</Link>
-			</li>
-			<li>
-				<Link className="navbar-button" to="maps-section" smooth onClick={() => toggleDrawer(false)}
+				<Link className="navbar-button" to="create-section" smooth onClick={() => toggleDrawer(false)}
 					  offset={isTabletOrMobileDevice ? 50 : 10}>
 					<Button size='large' color="inherit">Create</Button>
 				</Link>
 			</li>
 			<li>
-				<Link className="navbar-button" to="war-section" smooth onClick={() => toggleDrawer(false)}
-					  offset={isTabletOrMobileDevice ? 30 : 180}>
+				<Link className="navbar-button" to="search-section" smooth onClick={() => toggleDrawer(false)}
+					  offset={isTabletOrMobileDevice ? 30 : 10}>
 					<Button size='large' color="inherit">Search</Button>
 				</Link>
 			</li>

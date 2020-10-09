@@ -8,13 +8,14 @@ import {
 	Grid,
 	Radio,
 	RadioGroup,
-	Typography, TextareaAutosize, LinearProgress
+	Typography, TextareaAutosize, LinearProgress, createMuiTheme, ThemeProvider
 } from "@material-ui/core";
 import * as uuid from "uuid";
 import {motion, Variants} from "framer-motion";
 import PollRepository, {Poll, PollCreateAPI, PollEntry} from "../../repositories/PollRepository";
+import PieChart, {PieChartEntry} from "../PieChart/PieChart";
+import seedColor from "seed-color";
 import "./PollCard.scss";
-import {PieChart} from "react-minimal-pie-chart";
 
 export interface PollProps
 {
@@ -56,9 +57,21 @@ const linearProgressAnim: Variants = {
 	enter: {
 		width: "100%",
 		transition: {
-			duration: 2
+			duration: 1
 		}
 	}
+};
+
+const linearProgressTheme = (color: string) => {
+	return createMuiTheme({
+		overrides: {
+			MuiLinearProgress: {
+				barColorPrimary: {
+					backgroundColor: color
+				}
+			}
+		},
+	});
 };
 
 /**
@@ -285,38 +298,53 @@ export class PollCard extends Component<PollProps, PollState>
 						{this.state.poll?.question}
 					</Typography>
 				</FormLabel>
-				<ul className={"poll-section"}>
-					{this.state.poll?.entries.map((entry: PollEntry) => {
-						const entryPercent = this.computeEntryPercent(entry.voteCount);
-						return (
-							<li className={"poll-entry-result"} key={uuid.v4()}>
-								<Grid component={"div"} container justify={"space-between"}
-									  alignItems={"center"} direction={"row"}>
-									<Typography variant={"h5"} component={"span"}>
-										{entry.value}
-									</Typography>
-									<Typography variant={"h5"} component={"span"}>
-										{`${entry.voteCount || 0} Votes`}
-									</Typography>
-								</Grid>
-								<Grid container>
-									<Grid item xs={9} sm={10} md={11}>
-										<motion.div initial={"initial"} animate={"enter"} variants={linearProgressAnim}>
-											<LinearProgress className={"poll-entry-result-progress"}
-												variant="determinate" value={entryPercent} />
-										</motion.div>
-									</Grid>
-									<Grid item xs={3} sm={2} md={1}>
-										<Typography className={"poll-entry-result-percent"}
-											variant={"h5"} component={"h5"}>
-											{`${entryPercent}%`}
-										</Typography>
-									</Grid>
-								</Grid>
-							</li>
-						);
-					})}
-				</ul>
+				<Grid container>
+					<Grid item xs={12} md={8}>
+						<ul className={"poll-section"}>
+							{this.state.poll?.entries.map((entry: PollEntry, index: number) => {
+								const entryPercent = this.computeEntryPercent(entry.voteCount);
+								const entryColor = seedColor(index.toString()).toHex();
+
+								return (
+									<li className={"poll-entry-result"} key={uuid.v4()}>
+										<Grid component={"div"} container justify={"space-between"}
+											  alignItems={"center"} direction={"row"}>
+											<Typography variant={"h5"} component={"span"}>
+												{entry.value}
+											</Typography>
+											<Typography variant={"h5"} component={"span"}>
+												{`${entry.voteCount || 0} Votes`}
+											</Typography>
+										</Grid>
+										<Grid container>
+											<Grid item xs={8} sm={9} md={10}>
+												<motion.div initial={"initial"} animate={"enter"} variants={linearProgressAnim}>
+													<ThemeProvider theme={linearProgressTheme(entryColor)}>
+														<LinearProgress className={"poll-entry-result-progress"}
+																		variant="determinate" value={entryPercent} />
+													</ThemeProvider>
+												</motion.div>
+											</Grid>
+											<Grid item xs={4} sm={3} md={2}>
+												<Typography className={"poll-entry-result-percent"}
+															variant={"h5"} component={"h5"} style={{color: entryColor}}>
+													{`${entryPercent}%`}
+												</Typography>
+											</Grid>
+										</Grid>
+									</li>
+								);
+							})}
+						</ul>
+					</Grid>
+					<Grid item xs={12} md={4}>
+						<PieChart data={this.state.poll?.entries.map((entry: PollEntry, index: number): PieChartEntry => ({
+							tooltipText: entry.value,
+							value: this.computeEntryPercent(entry.voteCount),
+							color: seedColor(index.toString()).toHex()
+						}))} />
+					</Grid>
+				</Grid>
 			</>
 		);
 
