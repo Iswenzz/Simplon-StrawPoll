@@ -64,7 +64,7 @@ export default class PollRepository implements Repository<Poll>
 		try
 		{
 			const response: AxiosResponse<PollGetAPI> = await axios.post(
-				`http://localhost:8000/poll/${id}`);
+				`${process.env.REACT_APP_BACKEND_HOST}/poll/${id}`);
 			return response.data;
 		}
 		catch (e)
@@ -83,7 +83,7 @@ export default class PollRepository implements Repository<Poll>
 		try
 		{
 			const response: AxiosResponse<PollCreateAPI> = await axios.post(
-				"http://localhost:8000/poll/create", {
+				`${process.env.REACT_APP_BACKEND_HOST}/poll/create`, {
 				question: model.question,
 				entries: model.entries
 			});
@@ -106,7 +106,7 @@ export default class PollRepository implements Repository<Poll>
 		try
 		{
 			const response: AxiosResponse<PollCreateAPI> = await axios.post(
-				`http://localhost:8000/poll/${model.id}/${entryId}`);
+				`${process.env.REACT_APP_BACKEND_HOST}/poll/${model.id}/${entryId}`);
 			return response.data;
 		}
 		catch (e)
