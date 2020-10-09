@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 /**
  * Poll API Controller.
  * @package App\Controller
- * @Route("/pollapi", name="poll")
+ * @Route("/pollapi", name="pollapi")
  */
 class PollController extends AbstractController
 {
