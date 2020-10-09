@@ -33,7 +33,7 @@ export const Footer: FunctionComponent = (): JSX.Element =>
 						<Grid container justify={"center"} alignItems={"center"} direction={"row"}>
 							<img src={require("assets/images/strawpoll-logo.png")} alt="StrawPoll Logo"/>
 							<Typography variant={"h4"} component={"h4"}>
-								StrawPoll
+								Straw Poll
 							</Typography>
 						</Grid>
 					</Grid>

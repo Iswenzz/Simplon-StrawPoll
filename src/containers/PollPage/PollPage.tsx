@@ -70,6 +70,7 @@ export const PollPage: FunctionComponent<PollPageProps> = (props: PollPageProps)
 				poll: response.poll,
 				isLoading: false
 			}));
+			document.title = `Straw Poll - ${response.poll.question}`;
 		}
 	};
 
@@ -78,12 +79,12 @@ export const PollPage: FunctionComponent<PollPageProps> = (props: PollPageProps)
 	 * @param statut - The new statut.
 	 * @param pollId - The poll ID.
 	 */
-	const onStatutChange = (statut: PollStatut, pollId: number): void =>
+	const onStatutChange = async (statut: PollStatut, pollId: number): Promise<void> =>
 	{
 		// update react router & poll data
 		if (props.history.location.pathname !== `/poll/${pollId}`)
 			props.history.push(`/poll/${pollId}`);
-		updatePoll(pollId);
+		await updatePoll(pollId);
 	};
 
 	const pollResult: JSX.Element = (

@@ -81,7 +81,7 @@ export const NavBar: FunctionComponent = (): JSX.Element =>
 							<Grid container justify={"center"} alignItems={"center"} direction={"row"}>
 								<img height={40} src={require("assets/images/strawpoll-logo.png")} alt="StrawPoll Logo"/>
 								<Typography variant={"h2"} component={"h2"}>
-									StrawPoll
+									Straw Poll
 								</Typography>
 							</Grid>
 						</a>
