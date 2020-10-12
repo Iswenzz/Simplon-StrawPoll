@@ -13,7 +13,7 @@ class HomeController extends AbstractController
 {
 	/**
 	 * Serve the react application.
-	 * @Route("/")
+	 * @Route("/{reactRouting}", name="index", defaults={"reactRouting":null}, requirements={"reactRouting": "^(?!api).+"})
 	 */
     public function index()
     {
