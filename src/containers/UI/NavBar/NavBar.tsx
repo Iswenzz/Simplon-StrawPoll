@@ -75,10 +75,10 @@ export const NavBar: FunctionComponent = (): JSX.Element =>
 	return (
 		<AppBar className={"navbar"} component="nav" position={"fixed"}>
 			<Toolbar variant="dense">
-				<Grid component="section" container spacing={3} alignItems={"center"}>
-					<Grid component="figure" item xs={6} md={4}>
+				<Grid component="section" container>
+					<Grid component="figure" item xs={8} sm={5}>
 						<a href="/" className={"navbar-logo"}>
-							<Grid container justify={"center"} alignItems={"center"} direction={"row"}>
+							<Grid container justify={"flex-start"} alignItems={"center"} direction={"row"}>
 								<img height={40} src={require("assets/images/strawpoll-logo.png")} alt="StrawPoll Logo"/>
 								<Typography variant={"h2"} component={"h2"}>
 									Straw Poll
@@ -86,7 +86,7 @@ export const NavBar: FunctionComponent = (): JSX.Element =>
 							</Grid>
 						</a>
 					</Grid>
-					<Grid component="section" item xs={6} md={8}>
+					<Grid component="section" item xs={4} sm={7}>
 						{isTabletOrMobileDevice || isPortrait ? navBarButtonsMobile : navBarButtonsDesktop}
 					</Grid>
 				</Grid>
