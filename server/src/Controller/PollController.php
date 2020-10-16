@@ -81,6 +81,33 @@ class PollController extends AbstractController
     }
 
 	/**
+	 * Get a Poll from a specific query string.
+	 * @Route("/search/{query}")
+	 * @param string $query - The query string.
+	 * @param Request $req
+	 * @return JsonResponse
+	 */
+    public function search(string $query)
+	{
+		$classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
+		$serializer = new Serializer([new ObjectNormalizer($classMetadataFactory)], [new JsonEncoder()]);
+
+		if (isset($query) && $query === "null")
+		{
+			/**
+			 * serialize Poll objects to JSON
+			 * @var Poll[] $poll
+			 */
+			$polls = $this->getDoctrine()->getRepository(Poll::class)->findAll();
+			$json = json_decode($serializer->serialize($polls, "json", [
+				"groups" => ["poll"]
+			]), true);
+			return $this->json(["success" => true, "polls" => $json]);
+		}
+		return $this->json(["success" => false]);
+	}
+
+	/**
 	 * Get a Poll from its id.
 	 * @Route("/{id}")
 	 * @param int $id - The poll ID.

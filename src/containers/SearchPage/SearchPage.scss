@@ -1,0 +1,19 @@
+.searchpage {
+	margin: 6em 0;
+	min-height: 70vh;
+
+	#{&}-poll-wrapper {
+		width: 400px;
+		height: 250px;
+		margin: 1em;
+		cursor: pointer;
+	}
+
+	#{&}-poll {
+		height: 500px;
+		width: 800px;
+		transform: scale(0.5);
+		transform-origin: left top;
+		overflow: hidden;
+	}
+}

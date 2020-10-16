@@ -32,6 +32,11 @@ export interface PollCreateAPI extends ResponseAPI
 	poll: Poll
 }
 
+export interface PollSearchAPI extends ResponseAPI
+{
+	polls: Poll[]
+}
+
 /**
  * Repository for managing Polls
  */
@@ -108,6 +113,25 @@ export default class PollRepository implements Repository<Poll>
 			const response: AxiosResponse<PollCreateAPI> = await axios.post(
 				`${process.env.REACT_APP_BACKEND_HOST}/api/poll/${model.id}/${entryId}`);
 			return response.data;
+		}
+		catch (e)
+		{
+			console.log(e);
+		}
+		return null;
+	}
+
+	/**
+	 * Get all the polls from a specific search query.
+	 * @param query - The search query.
+	 */
+	public async search(query?: string): Promise<Poll[] | null>
+	{
+		try
+		{
+			const response: AxiosResponse<PollSearchAPI> = await axios.post(
+				`${process.env.REACT_APP_BACKEND_HOST}/api/poll/search/${query}`);
+			return response.data.polls;
 		}
 		catch (e)
 		{

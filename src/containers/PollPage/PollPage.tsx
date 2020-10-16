@@ -34,7 +34,6 @@ const anim: Variants = {
  * Page to register/vote or see the result of a poll.
  * @param props
  * @constructor
- * @TODO - loader & animations.
  */
 export const PollPage: FunctionComponent<PollPageProps> = (props: PollPageProps): JSX.Element =>
 {

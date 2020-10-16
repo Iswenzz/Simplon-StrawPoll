@@ -4,6 +4,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import { createMuiTheme, responsiveFontSizes, ThemeProvider } from "@material-ui/core";
 import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
 import "./App.scss";
+import SearchPage from "./containers/SearchPage/SearchPage";
 
 /**
  * The main app container.
@@ -78,6 +79,7 @@ export const App: FunctionComponent<any> = (props: any): JSX.Element =>
 				<Router>
 					<Switch>
 						<Route path="/poll/:id" children={<PollPage />} />
+						<Route path="/search" children={<SearchPage />} />
 						<Route exact path="/" children={<PollPage />} />
 					</Switch>
 				</Router>

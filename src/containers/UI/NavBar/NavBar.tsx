@@ -32,7 +32,7 @@ export const NavBar: FunctionComponent = (): JSX.Element =>
 				</Link>
 			</li>
 			<li>
-				<Link className="navbar-button" to={"/"} onClick={() => toggleDrawer(false)}>
+				<Link className="navbar-button" to={"/search"} onClick={() => toggleDrawer(false)}>
 					<Button size='large' color="inherit">Search</Button>
 				</Link>
 			</li>
