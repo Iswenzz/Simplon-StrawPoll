@@ -33,6 +33,10 @@ export const SearchPage: FunctionComponent<SearchPageProps> = (props: SearchPage
 		fetchPolls();
 	}, []);
 
+	/**
+	 * Fetch all polls from a search query string. (default: null = all polls)
+	 * @param query - The query string.
+	 */
 	const fetchPolls = async (query = "null"): Promise<void> =>
 	{
 		setState((prevState: SearchPageState) => ({

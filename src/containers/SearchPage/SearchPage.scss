@@ -1,10 +1,11 @@
 .searchpage {
 	margin: 6em 0;
 	min-height: 70vh;
+	overflow-x: hidden;
 
 	#{&}-poll-wrapper {
-		width: 400px;
 		height: 250px;
+		width: 400px;
 		margin: 1em;
 		cursor: pointer;
 	}
