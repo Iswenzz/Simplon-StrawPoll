@@ -1,5 +1,4 @@
-![](https://i.imgur.com/XFvRaaO.png)
-# Simplon PHP SQL TP
+# Simplon StrawPoll
 ![](https://i.imgur.com/0CWKflq.png)
 
 # StrawPoll
