@@ -1,7 +1,6 @@
 # Simplon StrawPoll
 ![](https://i.imgur.com/0CWKflq.png)
 
-# StrawPoll
 Créer une application de sondages
 
 ## Livrables
